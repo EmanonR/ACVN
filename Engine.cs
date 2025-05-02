@@ -297,7 +297,7 @@ public class Engine
     {
         DrawCanvas();
         DrawImage(GetObjectInFile("Backgrounds", "Hallway"));
-        DrawSprite(GetObjectInFile("Characters", "Pikachu"));
+        DrawSprite(GetObjectInFile("Characters", "Avery"));
         PrintNewLine("This is a very long sentence");
     }
     #endregion
