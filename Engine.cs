@@ -18,7 +18,7 @@ public class Engine
 
     public static void PrepareConsoleForUnicode()
     {
-        int windowY = Height + DialogueHeight + 2;
+        int windowY = Height + DialogueHeight + 4;
         int windowX = Width + 2;
         Console.OutputEncoding = Encoding.UTF8;
         Console.SetWindowSize(windowX, windowY);
