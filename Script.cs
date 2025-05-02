@@ -1,3 +1,7 @@
+using System;
+using System.ComponentModel;
+using System.Collections.Generic;
+
 public class Script : Engine
 {
     public bool IsDone { get; private set; } = false;
@@ -5,11 +9,6 @@ public class Script : Engine
     public override void Start()
     {
         base.Start();
-    }
-
-    public override void Update()
-    {
-        base.Update();
     }
 
     public void EndGame()
