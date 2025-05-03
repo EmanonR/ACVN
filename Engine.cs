@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 using static System.Net.Mime.MediaTypeNames;
+using System.Reflection.Emit;
 
 public class Engine
 {
@@ -169,18 +170,67 @@ public class Engine
         }
     }
 
-    public static void PrintNewLine(string text, bool autoForward = false, ConsoleColor color = ConsoleColor.Green)
+    #region PrintNewLine
+    static void PrintNewLineBase(String text, bool autoForward)
+    {
+        ClearTextBox();
+        PrintText(text); 
+        
+        // if not autoForward, "false"
+        if (!autoForward)
+            Console.ReadKey(false);
+    }
+    public static void PrintNewLine(string text)
+    {
+        Console.ForegroundColor = ConsoleColor.Blue;
+
+        PrintNewLineBase(text, false);
+    }
+
+    public static void PrintNewLine(string text, Character character = null)
+    {
+        if (character != null)
+            Console.ForegroundColor = character.TextColor;
+        else
+            Console.ForegroundColor = ConsoleColor.Blue;
+
+        PrintNewLineBase(text, false);
+    }
+
+    public static void PrintNewLine(string text, ConsoleColor color = ConsoleColor.Blue)
     {
         Console.ForegroundColor = color;
 
-        ClearTextBox();
-        PrintText(text);
-
-        //Console.SetCursorPosition(3, Height + DialogueHeight);
-
-        if (!autoForward)
-            Console.ReadKey(true);
+        PrintNewLineBase(text, false);
     }
+
+    public static void PrintNewLine(string text, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    {
+        Console.ForegroundColor = color;
+
+        PrintNewLineBase(text, autoForward);
+    }
+
+    public static void PrintNewLine(string text, Character character = null, ConsoleColor color = ConsoleColor.Blue)
+    {
+        if (character != null)
+            Console.ForegroundColor = character.TextColor;
+        else
+            Console.ForegroundColor = color;
+
+        PrintNewLineBase(text, false);
+    }
+
+    public static void PrintNewLine(string text, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    {
+        if (character != null)
+            Console.ForegroundColor = character.TextColor;
+        else
+            Console.ForegroundColor = color;
+
+        PrintNewLineBase(text, autoForward);
+    }
+    #endregion
 
     public static void PrintText(string text)
     {
@@ -323,9 +373,13 @@ public class Engine
     {
         Console.ForegroundColor = color;
         Console.CursorVisible = true;
-        Console.SetCursorPosition(3, Height + DialogueHeight);
 
-        return Console.ReadLine();
+        Console.SetCursorPosition(3, Height + DialogueHeight);
+        string line = Console.ReadLine();
+
+        Console.CursorVisible = false;
+
+        return line;
     }
 
     public static void PlayMusic(string nameOfFile)
@@ -391,5 +445,14 @@ public class Engine
         DrawSprite("Characters", "Avery");
         PrintNewLine("This is a very long sentence");
     }
+    #endregion
+
+    #region Classes
+
+    public class Character
+    {
+        public ConsoleColor TextColor = ConsoleColor.Green;
+    }
+
     #endregion
 }
