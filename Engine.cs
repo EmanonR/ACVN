@@ -171,8 +171,13 @@ public class Engine
     }
 
     #region PrintNewLine
-    static void PrintNewLineBase(String text, bool autoForward)
+    static void PrintNewLineBase(String text, bool autoForward = false, Character character = null, ConsoleColor color = ConsoleColor.Blue)
     {
+        if (character != null)
+            Console.ForegroundColor = character.TextColor;
+        else
+            Console.ForegroundColor = color;
+
         ClearTextBox();
         PrintText(text); 
         
@@ -180,55 +185,35 @@ public class Engine
         if (!autoForward)
             Console.ReadKey(false);
     }
+    
     public static void PrintNewLine(string text)
     {
-        Console.ForegroundColor = ConsoleColor.Blue;
-
-        PrintNewLineBase(text, false);
+        PrintNewLineBase(text);
     }
 
     public static void PrintNewLine(string text, Character character = null)
     {
-        if (character != null)
-            Console.ForegroundColor = character.TextColor;
-        else
-            Console.ForegroundColor = ConsoleColor.Blue;
-
-        PrintNewLineBase(text, false);
+        PrintNewLineBase(text, false, character);
     }
 
     public static void PrintNewLine(string text, ConsoleColor color = ConsoleColor.Blue)
     {
-        Console.ForegroundColor = color;
-
-        PrintNewLineBase(text, false);
+        PrintNewLineBase(text, false, null, color);
     }
 
     public static void PrintNewLine(string text, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
     {
-        Console.ForegroundColor = color;
-
-        PrintNewLineBase(text, autoForward);
+        PrintNewLineBase(text, autoForward, null, color);
     }
 
     public static void PrintNewLine(string text, Character character = null, ConsoleColor color = ConsoleColor.Blue)
     {
-        if (character != null)
-            Console.ForegroundColor = character.TextColor;
-        else
-            Console.ForegroundColor = color;
-
-        PrintNewLineBase(text, false);
+        PrintNewLineBase(text, false, character, color);
     }
 
     public static void PrintNewLine(string text, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
     {
-        if (character != null)
-            Console.ForegroundColor = character.TextColor;
-        else
-            Console.ForegroundColor = color;
-
-        PrintNewLineBase(text, autoForward);
+        PrintNewLineBase(text, autoForward, character, color);
     }
     #endregion
 
