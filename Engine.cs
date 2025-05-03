@@ -16,6 +16,9 @@ public class Engine
     public static int Height = 21;
     public static int DialogueHeight = 5;
 
+    public static string loadedSpriteID, loadedImageID, loadedSpriteFile, loadedImageFile;
+    public static string savedSpriteID, savedImageID, savedSpriteFile, savedImageFile;
+
     public static void PrepareConsoleForUnicode()
     {
         int windowY = Height + DialogueHeight + 4;
@@ -38,7 +41,7 @@ public class Engine
     public static void DrawCanvas(ConsoleColor color = ConsoleColor.Red)
     {
         // Canvas color
-        Console.ForegroundColor = color;    
+        Console.ForegroundColor = color;
         StringBuilder canvasBuilder = new StringBuilder();
 
         // Top Line
@@ -66,9 +69,14 @@ public class Engine
         Console.Write(canvasBuilder.ToString());
     }
 
-    public static void DrawImage(string[] image, ConsoleColor color = ConsoleColor.Gray)
+    public static void DrawImage(string fileName, string imageID , ConsoleColor color = ConsoleColor.Gray)
     {
+        string[] image = GetObjectInFile(fileName, imageID);
+        loadedImageFile = fileName;
+        loadedImageID = imageID;
+
         Console.ForegroundColor = color;
+
 
         for (int y = 0; y < Height; y++)
         {
@@ -81,17 +89,60 @@ public class Engine
         }
     }
 
-    public static void DrawSprite(string[] image, ConsoleColor color = ConsoleColor.Green)
+    public static void DrawSprite(string fileName, string spriteID, ConsoleColor color = ConsoleColor.Green)
     {
+        string[] sprite = GetObjectInFile(fileName, spriteID);
+        loadedSpriteFile = fileName;
+        loadedSpriteID = spriteID;
+
         Console.ForegroundColor = color;
 
-        for (int y = 0; y < image.Length; y++)
+        // for each line in image
+        for (int y = 0; y < sprite.Length; y++)
         {
-            char[] characters = image[y].ToCharArray();
+            if (y >= Height)
+            {
+                break;
+            }
 
+            int longest = 0;
+            //Find longest line
+            for (int o = 0; o < sprite.Length; o++)
+            {
+                if (o == 0)
+                    longest = sprite[o].Length;
+                else
+                {
+                    if (sprite[o].Length > longest)
+                        longest = sprite[o].Length;
+                }
+            }
+
+            // Characters in line
+            char[] characters = sprite[y].ToCharArray();
+
+            // For each character
             for (int x = 0; x < characters.Length; x++)
             {
-                DrawLine((Width / 2) - (characters.Length / 2) + x, Height - image.Length + y, RenderUnicodeChar(characters[x]));
+                if (characters[x].ToString() == "`")
+                    continue;
+
+
+                int yError = sprite.Length - Height;
+                int yPos = 0;
+
+                int xPos = (Width / 2) - (longest / 2) + x;
+                if (xPos > Width) xPos = Width;
+
+                if (yError > 0)
+                    yPos = (Height - sprite.Length + yError + y);
+                else
+                    yPos = (Height - sprite.Length + y);
+
+                if (yPos > Height) yPos = Height;
+
+                // Draw each character by position
+                DrawLine(xPos, yPos, RenderUnicodeChar(characters[x]));
             }
         }
     }
@@ -226,12 +277,12 @@ public class Engine
                 sb.Append("#");
 
                 DrawLine(boxX, y + b, sb.ToString());
-                
+
                 sb.Clear();
             }
 
             //Draw text
-            DrawLine(x, y + 2, (i + 1) + ": "+ choices[i]);
+            DrawLine(x, y + 2, (i + 1) + ": " + choices[i]);
         }
 
         // Reset screen to before
@@ -290,14 +341,54 @@ public class Engine
         //start music again at location in time?
     }
 
+    public static void RedrawScene()
+    {
+        RedrawImage();
+        RedrawSprite();
+    }
+
+    public static void RedrawImage()
+    {
+        if (savedImageID == null || savedImageFile == null)
+            return;
+
+        DrawImage(savedImageFile, savedImageID);
+    }
+
+    public static void RedrawSprite()
+    {
+        if (savedSpriteID == null || savedSpriteFile == null)
+            return;
+
+        DrawSprite(savedSpriteFile, savedSpriteID);
+    }
+
+    public static void SaveScene()
+    {
+        SaveImage();
+        SaveSprite();
+    }
+
+    public static void SaveImage()
+    {
+        savedImageFile = loadedImageFile;
+        savedImageID = loadedImageID;
+    }
+
+    public static void SaveSprite()
+    {
+        savedSpriteFile = loadedSpriteFile;
+        savedSpriteID = loadedSpriteID;
+    }
+
     #endregion
 
     #region Virtual Methods
     public virtual void Start()
     {
         DrawCanvas();
-        DrawImage(GetObjectInFile("Backgrounds", "Hallway"));
-        DrawSprite(GetObjectInFile("Characters", "Avery"));
+        DrawImage("Backgrounds", "Hallway");
+        DrawSprite("Characters", "Avery");
         PrintNewLine("This is a very long sentence");
     }
     #endregion
