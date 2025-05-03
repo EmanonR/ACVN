@@ -7,5 +7,6 @@ Scripts:
 * Program.cs tbh this just launches the game, im new to this shit
 
 Other Files:
-Characters.txt is used for sprites, such as characters, it will crop if too large
-Backgrounds.txt is used for backgrounds, they tile or crop if too large
+* Characters.txt is used for sprites, such as characters, it will crop if too large
+* Backgrounds.txt is used for backgrounds, they tile or crop if too large
+* bgm.wav, its not included since i dont have my own music, but just for reference
