@@ -306,6 +306,16 @@ public class Program
         AddToLineBase(text, linebreaks, false, character);
     }
 
+    public static void AddToLine(string text, bool autoForward = false)
+    {
+        AddToLineBase(text, 0, autoForward, null, DefaultTextColor);
+    }
+
+    public static void AddToLine(string text, int linebreaks = 0, bool autoForward = false)
+    {
+        AddToLineBase(text, linebreaks, autoForward, null, DefaultTextColor);
+    }
+
     public static void AddToLine(string text, Character character = null)
     {
         AddToLineBase(text, 0, false, character);
