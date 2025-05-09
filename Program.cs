@@ -520,6 +520,7 @@ public class Program
         return line;
     }
 
+    #region Player Input
     public string AwaitPlayerInput(ConsoleColor color = ConsoleColor.Yellow)
     {
         return AwaitPlayerInputBase(color);
@@ -571,6 +572,7 @@ public class Program
 
         return reply;
     }
+    #endregion
 
     public static void PlayMusic(string nameOfFile)
     {
