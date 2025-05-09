@@ -21,7 +21,9 @@ public class Program
 
     public static string loadedSpriteID, loadedImageID, loadedSpriteFile, loadedImageFile;
     public static string savedSpriteID, savedImageID, savedSpriteFile, savedImageFile;
+    public static string wholeLine;
     public static string currentLine;
+    public static int currentLineBreak = 0;
 
 
     public static void PrepareConsoleForUnicode()
@@ -177,7 +179,9 @@ public class Program
     #region NewLine
     private static void NewLineBase(String text, bool autoForward = false, Character character = null, ConsoleColor color = ConsoleColor.Blue)
     {
+        wholeLine = text;
         currentLine = text;
+        currentLineBreak = 0;
 
         if (character != null)
             Console.ForegroundColor = character.TextColor;
@@ -224,50 +228,78 @@ public class Program
     #endregion
 
     #region AddToLine
-    private static void AddToLineBase(String text, bool autoForward = false, Character character = null, ConsoleColor color = ConsoleColor.Blue)
+    private static void AddToLineBase(String text, int lineBreaks, bool autoForward = false, Character character = null, ConsoleColor color = ConsoleColor.Blue)
     {
-        if (character != null)
-            Console.ForegroundColor = character.TextColor;
+        // Color
+        Console.ForegroundColor = character != null ? character.TextColor : color;
+
+        // Line breaks
+        if (lineBreaks == 0)
+        {
+            wholeLine += text;
+            PrintText(text, currentLine.Length, currentLineBreak);
+            currentLine += text;
+        }
         else
-            Console.ForegroundColor = color;
-
-        PrintText(text, currentLine.Length);
-
-        currentLine += text;
+        {
+            for (int i = 0; i < lineBreaks; i++)
+            {
+                wholeLine += ";";
+                currentLineBreak++;
+            }
+            currentLine = text;
+            wholeLine += text;
+            PrintText(text, 0, currentLineBreak);
+        }
 
         // if not autoForward, "false"
         if (!autoForward)
             Console.ReadKey(false);
     }
 
-    public static void AddToLine(string text)
+    public static void AddToLine(string text, int lineBreaks)
     {
-        AddToLineBase(text);
+        AddToLineBase(text, lineBreaks);
+    }
+
+    public static void AddToLine(string text, int linebreaks, Character character = null)
+    {
+        AddToLineBase(text, linebreaks, false, character);
     }
 
     public static void AddToLine(string text, Character character = null)
     {
-        AddToLineBase(text, false, character);
+        AddToLineBase(text, 0, false, character);
+    }
+
+    public static void AddToLine(string text, int linebreaks, ConsoleColor color = ConsoleColor.Blue)
+    {
+        AddToLineBase(text, linebreaks, false, null, color);
     }
 
     public static void AddToLine(string text, ConsoleColor color = ConsoleColor.Blue)
     {
-        AddToLineBase(text, false, null, color);
+        AddToLineBase(text, 0, false, null, color);
+    }
+
+    public static void AddToLine(string text, int linebreaks, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    {
+        AddToLineBase(text, linebreaks, autoForward, null, color);
     }
 
     public static void AddToLine(string text, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
     {
-        AddToLineBase(text, autoForward, null, color);
-    }
-
-    public static void AddToLine(string text, Character character = null, ConsoleColor color = ConsoleColor.Blue)
-    {
-        AddToLineBase(text, false, character, color);
+        AddToLineBase(text, 0, autoForward, null, color);
     }
 
     public static void AddToLine(string text, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
     {
-        AddToLineBase(text, autoForward, character, color);
+        AddToLineBase(text, 0, autoForward, character, color);
+    }
+
+    public static void AddToLine(string text, int linebreaks, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    {
+        AddToLineBase(text, linebreaks, autoForward, character, color);
     }
     #endregion
 
@@ -284,6 +316,14 @@ public class Program
         // For each char in whole text
         for (int c = 0; c < text.Length; c++)
         {
+            // if line break
+            if (text[c] == ';')
+            {
+                lines.Add(" ");
+                textBuilder.Clear();
+                continue;
+            }
+
             // Add character to string
             textBuilder.Append(RenderUnicodeChar(text[c]));
             characterCounter++;
@@ -317,10 +357,9 @@ public class Program
             }
         }
 
-
         for (int l = 0; l < lines.Count; l++)
         {
-            DrawLine(2 + offsetX, Height + 2 + l, lines[l]);
+            DrawLine(2 + offsetX, Height + 2 + l + offsetY, lines[l]);
         }
 
     }
@@ -421,6 +460,21 @@ public class Program
         Console.CursorVisible = false;
 
         return line;
+    }
+
+    public string AwaitPlayerYN(ConsoleColor color = ConsoleColor.Yellow, ConsoleColor errorColor = ConsoleColor.Blue)
+    {
+        string reply = AwaitPlayerInput(color).Trim().ToLower();
+
+        while (reply != "y" && reply != "n")
+        {
+            NewLine("Please reply with Y or N", true, errorColor);
+            reply = AwaitPlayerInput();
+        }
+
+        Console.CursorVisible = false;
+
+        return reply;
     }
 
     public static void PlayMusic(string nameOfFile)
