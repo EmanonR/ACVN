@@ -25,6 +25,12 @@ public class Program
     public static string currentLine;
     public static int currentLineBreak = 0;
 
+    public static ConsoleColor DefaultBorderColor = ConsoleColor.Red;
+    public static ConsoleColor DefaultSpriteColor = ConsoleColor.Green;
+    public static ConsoleColor DefaultBackgroundColor = ConsoleColor.Gray;
+    public static ConsoleColor DefaultTextColor = ConsoleColor.Blue;
+    public static ConsoleColor DefaultInputColor = ConsoleColor.Yellow;
+
 
     public static void PrepareConsoleForUnicode()
     {
@@ -45,10 +51,9 @@ public class Program
     #endregion
 
     #region Drawing
-    public static void DrawCanvas(ConsoleColor color = ConsoleColor.Red)
+
+    private static void DrawCanvasBase()
     {
-        // Canvas color
-        Console.ForegroundColor = color;
         StringBuilder canvasBuilder = new StringBuilder();
 
         // Top Line
@@ -75,15 +80,27 @@ public class Program
 
         Console.Write(canvasBuilder.ToString());
     }
+    public static void DrawCanvas()
+    {
+        // Canvas color
+        Console.ForegroundColor = DefaultBorderColor;
 
-    public static void DrawImage(string fileName, string imageID , ConsoleColor color = ConsoleColor.Gray)
+        DrawCanvasBase();
+    }
+    public static void DrawCanvas(ConsoleColor color)
+    {
+        // Canvas color
+        Console.ForegroundColor = color;
+
+        DrawCanvasBase();
+    }
+
+
+    private static void DrawImageBase(string fileName, string imageID)
     {
         string[] image = GetObjectInFile(fileName, imageID);
         loadedImageFile = fileName;
         loadedImageID = imageID;
-
-        Console.ForegroundColor = color;
-
 
         for (int y = 0; y < Height; y++)
         {
@@ -95,14 +112,24 @@ public class Program
             }
         }
     }
+    public static void DrawImage(string fileName, string imageID)
+    {
+        Console.ForegroundColor = DefaultBackgroundColor;
 
-    public static void DrawSprite(string fileName, string spriteID, ConsoleColor color = ConsoleColor.Green)
+        DrawImageBase(fileName, imageID);
+    }
+    public static void DrawImage(string fileName, string imageID, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+
+        DrawImageBase(fileName, imageID);
+    }
+
+    private static void DrawSpriteBase(string fileName, string spriteID)
     {
         string[] sprite = GetObjectInFile(fileName, spriteID);
         loadedSpriteFile = fileName;
         loadedSpriteID = spriteID;
-
-        Console.ForegroundColor = color;
 
         // for each line in image
         for (int y = 0; y < sprite.Length; y++)
@@ -153,6 +180,18 @@ public class Program
             }
         }
     }
+    public static void DrawSprite(string fileName, string spriteID)
+    {
+        Console.ForegroundColor = DefaultSpriteColor;
+
+        DrawSpriteBase(fileName, spriteID);
+    }
+    public static void DrawSprite(string fileName, string spriteID, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+
+        DrawSpriteBase(fileName, spriteID);
+    }
 
     public static void ClearTextBox()
     {
@@ -177,7 +216,7 @@ public class Program
     }
 
     #region NewLine
-    private static void NewLineBase(String text, bool autoForward = false, Character character = null, ConsoleColor color = ConsoleColor.Blue)
+    private static void NewLineBase(String text, bool autoForward = false, Character character = null, ConsoleColor color = ConsoleColor.Yellow)
     {
         wholeLine = text;
         currentLine = text;
@@ -198,7 +237,7 @@ public class Program
 
     public static void NewLine(string text)
     {
-        NewLineBase(text);
+        NewLineBase(text, false, null, DefaultTextColor);
     }
 
     public static void NewLine(string text, Character character = null)
@@ -206,24 +245,24 @@ public class Program
         NewLineBase(text, false, character);
     }
 
-    public static void NewLine(string text, ConsoleColor color = ConsoleColor.Blue)
+    public static void NewLine(string text, ConsoleColor color)
     {
         NewLineBase(text, false, null, color);
     }
 
-    public static void NewLine(string text, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    public static void NewLine(string text, bool autoForward = false)
+    {
+        NewLineBase(text, autoForward, null, DefaultTextColor);
+    }
+
+    public static void NewLine(string text, ConsoleColor color, bool autoForward = false)
     {
         NewLineBase(text, autoForward, null, color);
     }
 
-    public static void NewLine(string text, Character character = null, ConsoleColor color = ConsoleColor.Blue)
+    public static void NewLine(string text, Character character = null, bool autoForward = false)
     {
-        NewLineBase(text, false, character, color);
-    }
-
-    public static void NewLine(string text, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
-    {
-        NewLineBase(text, autoForward, character, color);
+        NewLineBase(text, autoForward, character, DefaultTextColor);
     }
     #endregion
 
@@ -257,12 +296,12 @@ public class Program
             Console.ReadKey(false);
     }
 
-    public static void AddToLine(string text, int lineBreaks)
+    public static void AddToLine(string text, int lineBreaks = 0)
     {
         AddToLineBase(text, lineBreaks);
     }
 
-    public static void AddToLine(string text, int linebreaks, Character character = null)
+    public static void AddToLine(string text, int linebreaks = 0, Character character = null)
     {
         AddToLineBase(text, linebreaks, false, character);
     }
@@ -272,34 +311,29 @@ public class Program
         AddToLineBase(text, 0, false, character);
     }
 
-    public static void AddToLine(string text, int linebreaks, ConsoleColor color = ConsoleColor.Blue)
+    public static void AddToLine(string text, int linebreaks, ConsoleColor color)
     {
         AddToLineBase(text, linebreaks, false, null, color);
     }
 
-    public static void AddToLine(string text, ConsoleColor color = ConsoleColor.Blue)
-    {
-        AddToLineBase(text, 0, false, null, color);
-    }
-
-    public static void AddToLine(string text, int linebreaks, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    public static void AddToLine(string text, int linebreaks, ConsoleColor color, bool autoForward = false)
     {
         AddToLineBase(text, linebreaks, autoForward, null, color);
     }
 
-    public static void AddToLine(string text, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    public static void AddToLine(string text, ConsoleColor color, bool autoForward = false)
     {
         AddToLineBase(text, 0, autoForward, null, color);
     }
 
-    public static void AddToLine(string text, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    public static void AddToLine(string text, Character character = null, bool autoForward = false)
     {
-        AddToLineBase(text, 0, autoForward, character, color);
+        AddToLineBase(text, 0, autoForward, character, DefaultTextColor);
     }
 
-    public static void AddToLine(string text, int linebreaks, Character character = null, bool autoForward = false, ConsoleColor color = ConsoleColor.Blue)
+    public static void AddToLine(string text, int linebreaks, Character character = null, bool autoForward = false)
     {
-        AddToLineBase(text, linebreaks, autoForward, character, color);
+        AddToLineBase(text, linebreaks, autoForward, character, DefaultTextColor);
     }
     #endregion
 
@@ -375,7 +409,7 @@ public class Program
         return c == '\0' || char.IsWhiteSpace(c) ? " " : c.ToString();
     }
 
-    public static void DisplayChoices(List<string> choices, ConsoleColor color = ConsoleColor.Red)
+    private static void DisplayChoicesBase(List<string> choices, ConsoleColor color)
     {
         Console.ForegroundColor = color;
 
@@ -417,6 +451,20 @@ public class Program
 
         // Reset screen to before
     }
+    public static void DisplayChoices(List<string> choices, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+
+        DisplayChoicesBase(choices, color);
+    }
+    public static void DisplayChoices(List<string> choices)
+    {
+        Console.ForegroundColor = DefaultInputColor;
+
+        DisplayChoicesBase(choices, DefaultInputColor);
+
+        
+    }
     #endregion
 
     #region File Handling
@@ -449,7 +497,7 @@ public class Program
 
     #region Methods
 
-    public string AwaitPlayerInput(ConsoleColor color = ConsoleColor.Yellow)
+    private static string AwaitPlayerInputBase(ConsoleColor color = ConsoleColor.Yellow)
     {
         Console.ForegroundColor = color;
         Console.CursorVisible = true;
@@ -462,13 +510,50 @@ public class Program
         return line;
     }
 
-    public string AwaitPlayerYN(ConsoleColor color = ConsoleColor.Yellow, ConsoleColor errorColor = ConsoleColor.Blue)
+    public string AwaitPlayerInput(ConsoleColor color = ConsoleColor.Yellow)
     {
-        string reply = AwaitPlayerInput(color).Trim().ToLower();
+        return AwaitPlayerInputBase(color);
+    }
+    public string AwaitPlayerInput()
+    {
+        return AwaitPlayerInputBase(DefaultInputColor);
+    }
+
+    public string AwaitPlayerYN(ConsoleColor errorColor = ConsoleColor.Blue, ConsoleColor color = ConsoleColor.Yellow)
+    {
+        string reply = AwaitPlayerInputBase(color).Trim().ToLower();
 
         while (reply != "y" && reply != "n")
         {
-            NewLine("Please reply with Y or N", true, errorColor);
+            NewLine("Please reply with Y or N", errorColor, true);
+            reply = AwaitPlayerInput();
+        }
+
+        Console.CursorVisible = false;
+
+        return reply;
+    }
+    public string AwaitPlayerYN(ConsoleColor errorColor = ConsoleColor.Blue)
+    {
+        string reply = AwaitPlayerInput(DefaultInputColor).Trim().ToLower();
+
+        while (reply != "y" && reply != "n")
+        {
+            NewLine("Please reply with Y or N", errorColor, true);
+            reply = AwaitPlayerInput();
+        }
+
+        Console.CursorVisible = false;
+
+        return reply;
+    }
+    public string AwaitPlayerYN()
+    {
+        string reply = AwaitPlayerInput(DefaultInputColor).Trim().ToLower();
+
+        while (reply != "y" && reply != "n")
+        {
+            NewLine("Please reply with Y or N", DefaultTextColor, true);
             reply = AwaitPlayerInput();
         }
 
