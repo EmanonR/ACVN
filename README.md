@@ -2,8 +2,7 @@
 Ascii Console Visual Novel Engine
 
 Scripts:
-* Script.cs is for game logic, make the game inside here.
-* Program.cs is the game engine, this could be edited but is not meant for game logic
+* Script.cs is an example of a numbers guessing game
 
 Other Files:
 * Characters.txt is used for sprites, such as characters, it will crop if too large
