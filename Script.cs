@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-public class Script : Engine
+public class Script : Program
 {
     public bool IsDone { get; private set; } = false;
 
